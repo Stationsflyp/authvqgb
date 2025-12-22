@@ -336,8 +336,8 @@ export function LicensesTab({ session, showMessage }: LicensesTabProps) {
 
       {/* Generate Modal */}
       {showGenerateModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start justify-center z-50 p-4 animate-fade-in pt-20">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-green-500/30 p-8 w-full max-w-md shadow-2xl animate-scale-in">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in overflow-y-auto">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-green-500/30 p-8 w-full max-w-md shadow-2xl animate-scale-in my-8">
             <div className="mb-6">
               <h2 className="text-2xl font-bold bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent mb-2">
                 Generate Custom Licenses
@@ -345,7 +345,7 @@ export function LicensesTab({ session, showMessage }: LicensesTabProps) {
               <p className="text-slate-400 text-sm">Configure and create {keyCount} {keyCount === "1" ? "license" : "licenses"} with custom settings</p>
             </div>
             
-            <div className="space-y-5">
+            <div className="space-y-5 max-h-96 overflow-y-auto pr-2">
               {/* Quantity Input */}
               <div className="group">
                 <label className="block text-sm font-semibold text-slate-300 mb-2.5 flex items-center gap-2">
