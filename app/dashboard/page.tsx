@@ -30,21 +30,6 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!session) return
 
-    const registerLocation = async () => {
-      try {
-        await fetch(`${API}/location/register`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_id: session.id || 1,
-            username: session.app_name || "User",
-          }),
-        })
-      } catch (error) {
-        console.error("Error registering location:", error)
-      }
-    }
-
     const refreshSubscription = async () => {
       try {
         const response = await fetch(
@@ -71,7 +56,6 @@ export default function DashboardPage() {
       }
     }
 
-    registerLocation()
     const interval = setInterval(refreshSubscription, 30000)
     return () => clearInterval(interval)
   }, [session, API])
