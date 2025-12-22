@@ -29,7 +29,7 @@ export function Chat({ username, avatar_url, email }: ChatProps) {
   const [wordCount, setWordCount] = useState(0)
   const websocketRef = useRef<WebSocket | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -42,7 +42,7 @@ export function Chat({ username, avatar_url, email }: ChatProps) {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch(`${apiUrl}/api/chat/history`)
+        const response = await fetch(`${apiUrl}/chat/history`)
         const data = await response.json()
         if (data.success) {
           setMessages(data.messages)
@@ -58,8 +58,9 @@ export function Chat({ username, avatar_url, email }: ChatProps) {
   }, [apiUrl])
 
   useEffect(() => {
-    const wsProtocol = apiUrl?.includes("https") ? "wss" : "ws"
-    const wsUrl = apiUrl?.replace(/^https?/, wsProtocol) + "/ws/chat"
+    const baseUrl = apiUrl.replace(/\/api$/, "")
+    const wsProtocol = baseUrl.includes("https") ? "wss" : "ws"
+    const wsUrl = baseUrl.replace(/^https?/, wsProtocol) + "/ws/chat"
 
     const ws = new WebSocket(wsUrl)
 
