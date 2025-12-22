@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server"
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  console.log("[v0] Deleting user:", params.id)
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  console.log("[v0] Deleting user:", id)
 
   return NextResponse.json({
     success: true,
