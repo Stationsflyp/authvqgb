@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { DashboardLayout } from "@/components/dashboard/keyauth-layout"
+import { HolidayModal } from "@/components/dashboard/holiday-modal"
 import { useLanguage } from "@/lib/i18n"
 
 export default function DashboardPage() {
@@ -67,5 +68,10 @@ export default function DashboardPage() {
     )
   }
 
-  return <DashboardLayout session={session} />
+  return (
+    <>
+      <HolidayModal username={session.app_name || "Usuario"} />
+      <DashboardLayout session={session} />
+    </>
+  )
 }
