@@ -135,9 +135,10 @@ function DiscordCallbackContent() {
   }
 
   if (!loading && userData) {
-    const blurredEmail = userData.email 
-      ? userData.email.split("").map((char, idx) => {
-          const emailLength = userData.email.length
+    const email = userData.email || ""
+    const blurredEmail = email 
+      ? email.split("").map((char, idx) => {
+          const emailLength = email.length
           const showStart = Math.ceil(emailLength * 0.2)
           const showEnd = Math.ceil(emailLength * 0.8)
           return idx < showStart || idx >= showEnd ? "•" : char
