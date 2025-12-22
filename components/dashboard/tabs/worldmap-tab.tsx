@@ -21,9 +21,42 @@ interface WorldMapTabProps {
   language: string
 }
 
+const COUNTRY_FLAGS: Record<string, string> = {
+  "United States": "🇺🇸",
+  "United Kingdom": "🇬🇧",
+  "Canada": "🇨🇦",
+  "Mexico": "🇲🇽",
+  "Brazil": "🇧🇷",
+  "Argentina": "🇦🇷",
+  "Spain": "🇪🇸",
+  "France": "🇫🇷",
+  "Germany": "🇩🇪",
+  "Italy": "🇮🇹",
+  "Russia": "🇷🇺",
+  "Japan": "🇯🇵",
+  "China": "🇨🇳",
+  "India": "🇮🇳",
+  "Australia": "🇦🇺",
+  "Netherlands": "🇳🇱",
+  "Sweden": "🇸🇪",
+  "Switzerland": "🇨🇭",
+  "Poland": "🇵🇱",
+  "South Korea": "🇰🇷",
+  "Turkey": "🇹🇷",
+  "Chile": "🇨🇱",
+  "Colombia": "🇨🇴",
+  "Peru": "🇵🇪",
+  "Venezuela": "🇻🇪",
+}
+
+const getCountryFlag = (country: string): string => {
+  return COUNTRY_FLAGS[country] || "🌐"
+}
+
 export function WorldMapTab({ session, language }: WorldMapTabProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [users, setUsers] = useState<UserLocation[]>([])
+  const [uniqueUsers, setUniqueUsers] = useState<UserLocation[]>([])
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState({ countries: 0, cities: 0 })
   const API = process.env.NEXT_PUBLIC_API_URL || "https://questions-segment-mortgages-duncan.trycloudflare.com/api"
@@ -39,10 +72,15 @@ export function WorldMapTab({ session, language }: WorldMapTabProps) {
       const response = await fetch(`${API}/location/users`)
       const data = await response.json()
       if (data.status === "success" && data.locations) {
-        setUsers(data.locations)
+        const deduped = Array.from(
+          new Map(data.locations.map((u: any) => [u.username, u])).values()
+        ) as UserLocation[]
+        
+        setUsers(deduped)
+        setUniqueUsers(deduped)
         setStats({
-          countries: new Set(data.locations.map((u: any) => u.country)).size,
-          cities: new Set(data.locations.map((u: any) => u.city)).size,
+          countries: new Set(deduped.map((u: any) => u.country)).size,
+          cities: new Set(deduped.map((u: any) => u.city)).size,
         })
       }
     } catch (error) {
@@ -71,7 +109,7 @@ export function WorldMapTab({ session, language }: WorldMapTabProps) {
           .pointRadius(() => 0.8)
           .pointLat((d: any) => d.latitude)
           .pointLng((d: any) => d.longitude)
-          .pointLabel((d: any) => `<strong>${d.username}</strong><br/>📍 ${d.city}, ${d.country}`)
+          .pointLabel((d: any) => `<strong>${d.username}</strong><br/>${getCountryFlag(d.country)} ${d.city}, ${d.country}`)
           .onPointHover((d: any) => {
             if (containerRef.current) {
               containerRef.current.style.cursor = d ? "pointer" : "auto"
@@ -167,24 +205,45 @@ export function WorldMapTab({ session, language }: WorldMapTabProps) {
         <div ref={containerRef} style={{ width: "100%", height: "600px" }} className="bg-gradient-to-b from-slate-900 to-black" />
       </div>
 
-      <Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-[#667eea]/30 p-6 rounded-lg">
-        <h3 className="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
-          <span>🔝</span> Usuarios Activos
-        </h3>
-        <div className="space-y-2 max-h-80 overflow-y-auto">
-          {users.length === 0 ? (
-            <p className="text-gray-400 text-sm text-center py-8">No hay usuarios en línea</p>
+      <Card className="bg-gradient-to-br from-slate-900/60 to-slate-950/80 border border-[#667eea]/40 p-6 rounded-xl shadow-2xl">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#667eea] to-[#8b9eff] flex items-center gap-2">
+            <span className="text-2xl">👥</span> Usuarios Activos
+          </h3>
+          <span className="px-3 py-1 bg-[#667eea]/20 border border-[#667eea]/50 rounded-full text-sm font-semibold text-[#667eea]">
+            {uniqueUsers.length} online
+          </span>
+        </div>
+        <div className="space-y-2 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
+          {uniqueUsers.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+              <span className="text-4xl mb-2">🌍</span>
+              <p className="text-sm">No hay usuarios en línea</p>
+            </div>
           ) : (
-            users.map((user, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg border border-[#667eea]/20 hover:bg-slate-700/50 hover:border-[#667eea]/50 transition-all cursor-pointer group">
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-3 h-3 rounded-full bg-[#667eea] animate-pulse flex-shrink-0" />
+            uniqueUsers.map((user) => (
+              <div
+                key={user.username}
+                className="group flex items-center justify-between p-4 bg-gradient-to-r from-slate-800/40 to-slate-700/20 rounded-lg border border-[#667eea]/20 hover:border-[#667eea]/60 hover:shadow-lg hover:shadow-[#667eea]/10 transition-all duration-300"
+              >
+                <div className="flex items-center gap-4 flex-1 min-w-0">
+                  <div className="relative flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#667eea] to-[#5568d3] flex items-center justify-center shadow-lg group-hover:shadow-[#667eea]/50">
+                      <span className="text-lg">{getCountryFlag(user.country)}</span>
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-green-400 border-2 border-slate-900 animate-pulse" />
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-slate-100 truncate group-hover:text-[#667eea] transition">{user.username}</p>
-                    <p className="text-xs text-slate-400">📍 {user.city}, {user.country}</p>
+                    <p className="text-sm font-bold text-white group-hover:text-[#667eea] transition">{user.username}</p>
+                    <p className="text-xs text-slate-400 flex items-center gap-1">
+                      <span>📍</span>
+                      <span className="truncate">{user.city}, {user.country}</span>
+                    </p>
                   </div>
                 </div>
-                <span className="text-xs text-slate-500 whitespace-nowrap flex-shrink-0 ml-2">{new Date(user.timestamp).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}</span>
+                <span className="text-xs text-slate-500 font-medium whitespace-nowrap flex-shrink-0 ml-4 px-3 py-1 bg-slate-700/30 rounded-full">
+                  {new Date(user.timestamp).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
+                </span>
               </div>
             ))
           )}
