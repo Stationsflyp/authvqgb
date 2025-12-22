@@ -63,7 +63,7 @@ export function WorldMapTab({ session, language }: WorldMapTabProps) {
 
   useEffect(() => {
     loadUserLocations()
-    const interval = setInterval(loadUserLocations, 5000)
+    const interval = setInterval(loadUserLocations, 60000)
     return () => clearInterval(interval)
   }, [])
 
