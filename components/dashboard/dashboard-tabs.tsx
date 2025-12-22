@@ -31,6 +31,12 @@ interface DashboardTabsProps {
 export function DashboardTabs({ session, onLogout, language, onLanguageChange }: DashboardTabsProps) {
   const [activeTab, setActiveTab] = useState("credentials")
   const { t } = useTranslation(language)
+  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null)
+
+  const showMessage = (text: string, type: "success" | "error" = "success") => {
+    setMessage({ text, type })
+    setTimeout(() => setMessage(null), 3000)
+  }
 
   const handleRefresh = () => {
     window.location.reload()
@@ -139,25 +145,25 @@ export function DashboardTabs({ session, onLogout, language, onLanguageChange }:
           </TabsList>
 
           <TabsContent value="credentials" className="mt-0">
-            <CredentialsTab session={session} language={language} />
+            <CredentialsTab session={session} showMessage={showMessage} />
           </TabsContent>
           <TabsContent value="users" className="mt-0">
-            <UsersTab session={session} language={language} />
+            <UsersTab session={session} showMessage={showMessage} />
           </TabsContent>
           <TabsContent value="kill" className="mt-0">
-            <KillSessionTab session={session} language={language} />
+            <KillSessionTab session={session} showMessage={showMessage} />
           </TabsContent>
           <TabsContent value="create" className="mt-0">
-            <CreateUserTab session={session} language={language} />
+            <CreateUserTab session={session} showMessage={showMessage} />
           </TabsContent>
           <TabsContent value="banned" className="mt-0">
-            <BannedTab session={session} language={language} />
+            <BannedTab session={session} showMessage={showMessage} />
           </TabsContent>
           <TabsContent value="hwid" className="mt-0">
-            <HWIDResetsTab session={session} language={language} />
+            <HWIDResetsTab session={session} showMessage={showMessage} />
           </TabsContent>
           <TabsContent value="version" className="mt-0">
-            <VersionTab session={session} language={language} />
+            <VersionTab session={session} showMessage={showMessage} />
           </TabsContent>
           <TabsContent value="chat" className="mt-0 h-[500px]">
             <Chat 
