@@ -78,7 +78,7 @@ export function Stats({ language }: StatsProps) {
           observer.unobserve(entry.target)
         }
       },
-      { margin: "0px 0px -100px 0px" }
+      { rootMargin: "0px 0px -100px 0px" }
     )
 
     if (sectionRef.current) {

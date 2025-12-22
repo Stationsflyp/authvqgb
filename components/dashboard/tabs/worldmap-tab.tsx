@@ -60,21 +60,20 @@ export function WorldMapTab({ session, language }: WorldMapTabProps) {
     const loadGlobe = async () => {
       try {
         const GlobeMod = (await import("globe.gl")).default
-        const globe = GlobeMod()
+        const globe = GlobeMod(containerRef.current!) as any
+        
+        globe
           .globeImageUrl("https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-night.jpg")
           .backgroundColor("rgba(15, 15, 15, 0)")
           .pointsData(users)
           .pointColor(() => "#667eea")
-          .pointSize(() => 1.2)
-          .pointAltitude(() => 0.08)
-          .pointLabel((d: any) => `<div style="background: rgba(0,0,0,0.9); color: #667eea; padding: 10px; border-radius: 6px; font-size: 12px; border: 1px solid #667eea;"><strong>${d.username}</strong><br/>📍 ${d.city}, ${d.country}</div>`)
+          .pointRadius(() => 0.8)
+          .pointLabel((d: any) => `<strong>${d.username}</strong><br/>📍 ${d.city}, ${d.country}`)
           .onPointHover((d: any) => {
             if (containerRef.current) {
               containerRef.current.style.cursor = d ? "pointer" : "auto"
             }
           })
-
-        globe(containerRef.current)
 
         const width = containerRef.current?.clientWidth || 800
         const height = containerRef.current?.clientHeight || 600
