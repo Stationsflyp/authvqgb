@@ -6,6 +6,8 @@ export interface SessionData {
   secret: string
   avatar?: string
   email?: string
+  subscription_tier?: string
+  subscription_status?: string
 }
 
 export interface User {

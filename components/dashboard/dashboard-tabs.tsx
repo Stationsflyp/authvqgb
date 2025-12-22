@@ -13,6 +13,10 @@ import { CreateUserTab } from "./tabs/create-user-tab"
 import { BannedTab } from "./tabs/banned-tab"
 import { HWIDResetsTab } from "./tabs/hwid-resets-tab"
 import { VersionTab } from "./tabs/version-tab"
+import { PremiumTab } from "./tabs/premium-tab"
+import { AnalyticsTab } from "./tabs/analytics-tab"
+import { ManagerTab } from "./tabs/manager-tab"
+import { WebhookTab } from "./tabs/webhook-tab"
 import { Chat } from "./chat"
 import type { SessionData } from "@/lib/api-client"
 import { type Language, useTranslation } from "@/lib/i18n"
@@ -108,6 +112,30 @@ export function DashboardTabs({ session, onLogout, language, onLanguageChange }:
             >
               💬 Chat
             </TabsTrigger>
+            <TabsTrigger
+              value="premium"
+              className="data-[state=active]:bg-[#667eea] data-[state=inactive]:bg-[#1a1a1a] rounded-t-lg rounded-b-none"
+            >
+              👑 Premium
+            </TabsTrigger>
+            <TabsTrigger
+              value="analytics"
+              className="data-[state=active]:bg-[#667eea] data-[state=inactive]:bg-[#1a1a1a] rounded-t-lg rounded-b-none"
+            >
+              📊 Analytics
+            </TabsTrigger>
+            <TabsTrigger
+              value="manager"
+              className="data-[state=active]:bg-[#667eea] data-[state=inactive]:bg-[#1a1a1a] rounded-t-lg rounded-b-none"
+            >
+              👥 Manager
+            </TabsTrigger>
+            <TabsTrigger
+              value="webhook"
+              className="data-[state=active]:bg-[#667eea] data-[state=inactive]:bg-[#1a1a1a] rounded-t-lg rounded-b-none"
+            >
+              ⚡ Webhooks
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="credentials" className="mt-0">
@@ -137,6 +165,18 @@ export function DashboardTabs({ session, onLogout, language, onLanguageChange }:
               avatar_url={session.avatar || ""}
               email={session.email || ""}
             />
+          </TabsContent>
+          <TabsContent value="premium" className="mt-0">
+            <PremiumTab session={session} language={language} />
+          </TabsContent>
+          <TabsContent value="analytics" className="mt-0">
+            <AnalyticsTab session={session} isPremium={session.subscription_tier === "gold"} language={language} />
+          </TabsContent>
+          <TabsContent value="manager" className="mt-0">
+            <ManagerTab session={session} isPremium={session.subscription_tier === "gold"} language={language} />
+          </TabsContent>
+          <TabsContent value="webhook" className="mt-0">
+            <WebhookTab session={session} isPremium={session.subscription_tier === "gold"} language={language} />
           </TabsContent>
         </Tabs>
       </div>

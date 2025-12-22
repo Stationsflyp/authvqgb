@@ -71,12 +71,28 @@ function DiscordCallbackContent() {
             }
           }
 
+          let subscriptionTier = "free"
+          let subscriptionStatus = "inactive"
+          
+          try {
+            const subResponse = await fetch(`${API}/premium/subscription?owner_id=${data.owner_id}&secret=${data.secret}`)
+            const subData = await subResponse.json()
+            if (subData.success && subData.subscription) {
+              subscriptionTier = subData.subscription.tier
+              subscriptionStatus = subData.subscription.status
+            }
+          } catch (e) {
+            console.warn("Failed to fetch subscription data:", e)
+          }
+
           const sessionData = {
             owner_id: data.owner_id,
             app_name: data.app_name,
             secret: data.secret,
             avatar: data.avatar,
             email: data.email,
+            subscription_tier: subscriptionTier,
+            subscription_status: subscriptionStatus,
           }
           
           localStorage.setItem("dashSession", JSON.stringify(sessionData))
