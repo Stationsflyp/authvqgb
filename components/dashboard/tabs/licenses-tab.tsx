@@ -12,6 +12,7 @@ interface License {
   hwid: string | null
   expires: string | null
   status: string
+  notes?: string | null
 }
 
 interface LicensesTabProps {
@@ -257,6 +258,7 @@ export function LicensesTab({ session, showMessage }: LicensesTabProps) {
                   <th className="p-4 text-left font-semibold">License Key</th>
                   <th className="p-4 text-left font-semibold">HWID</th>
                   <th className="p-4 text-left font-semibold">Expires</th>
+                  <th className="p-4 text-left font-semibold">Notes</th>
                   <th className="p-4 text-left font-semibold">Status</th>
                   <th className="p-4 text-left font-semibold">Actions</th>
                 </tr>
@@ -293,6 +295,11 @@ export function LicensesTab({ session, showMessage }: LicensesTabProps) {
                     </td>
                     <td className="p-4 text-slate-400 text-sm">
                       {license.expires ? new Date(license.expires).toLocaleDateString() : "Never"}
+                    </td>
+                    <td className="p-4">
+                      <span className="text-xs text-slate-300 max-w-xs truncate hover:text-slate-100 transition" title={license.notes || ""}>
+                        {license.notes ? license.notes : <span className="text-slate-500">-</span>}
+                      </span>
                     </td>
                     <td className="p-4">
                       <span
@@ -333,12 +340,29 @@ export function LicensesTab({ session, showMessage }: LicensesTabProps) {
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-green-500/30 p-8 w-full max-w-md shadow-2xl animate-scale-in">
             <div className="mb-6">
               <h2 className="text-2xl font-bold bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent mb-2">
-                Configure License Generation
+                Generate Custom Licenses
               </h2>
-              <p className="text-slate-400 text-sm">Set expiration and add metadata for {keyCount} {keyCount === "1" ? "license" : "licenses"}</p>
+              <p className="text-slate-400 text-sm">Configure and create {keyCount} {keyCount === "1" ? "license" : "licenses"} with custom settings</p>
             </div>
             
             <div className="space-y-5">
+              {/* Quantity Input */}
+              <div className="group">
+                <label className="block text-sm font-semibold text-slate-300 mb-2.5 flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                  Quantity
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  value={keyCount}
+                  onChange={(e) => setKeyCount(e.target.value)}
+                  className="w-full px-4 py-3 border border-slate-600/50 rounded-lg bg-slate-700/30 text-white font-semibold focus:outline-none focus:border-green-500/50 focus:bg-slate-700/50 transition-all placeholder:text-slate-500"
+                />
+                <p className="text-xs text-slate-500 mt-1.5">How many license keys to generate (1-100)</p>
+              </div>
+
               {/* Duration Input */}
               <div className="group">
                 <label className="block text-sm font-semibold text-slate-300 mb-2.5 flex items-center gap-2">
