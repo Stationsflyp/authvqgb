@@ -20,6 +20,7 @@ import {
   MessageCircle,
   Crown,
   Zap,
+  Earth,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/lib/i18n"
@@ -36,6 +37,7 @@ import { LicensesTab } from "./tabs/licenses-tab"
 import { ContactTab } from "./tabs/contact-tab"
 import { Chat } from "./chat"
 import { PremiumLayout } from "./premium-layout"
+import { WorldGlobe } from "./world-globe"
 
 interface DashboardLayoutProps {
   session: {
@@ -63,6 +65,7 @@ type TabType =
   | "contact"
   | "chat"
   | "premium"
+  | "world"
 
 export function DashboardLayout({ session }: DashboardLayoutProps) {
   const [activeTab, setActiveTab] = useState<TabType>("credentials")
@@ -101,6 +104,12 @@ export function DashboardLayout({ session }: DashboardLayoutProps) {
       label: "💬 Chat",
       icon: MessageCircle,
       color: "from-cyan-600 to-cyan-800",
+    },
+    {
+      id: "world" as TabType,
+      label: "🌍 Live Map",
+      icon: Earth,
+      color: "from-green-600 to-teal-800",
     },
     {
       id: "credentials" as TabType,
@@ -302,6 +311,10 @@ export function DashboardLayout({ session }: DashboardLayoutProps) {
           {/* Tab Content */}
           {activeTab === "premium" ? (
             <PremiumLayout session={session} language={language} onBack={() => setActiveTab("credentials")} />
+          ) : activeTab === "world" ? (
+            <div className="h-[calc(100vh-160px)] bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl overflow-hidden shadow-2xl animate-scale-in">
+              <WorldGlobe />
+            </div>
           ) : (
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 shadow-2xl animate-scale-in">
               {activeTab === "chat" && <Chat username={session.app_name || "Usuario"} avatar_url={session.avatar || ""} email={session.email || ""} />}
