@@ -96,19 +96,19 @@ export function DashboardLayout({ session }: DashboardLayoutProps) {
   const tabs = [
     {
       id: "worldmap" as TabType,
-      label: "🌍 Mapa Mundial",
+      label: "Mapa Mundial",
       icon: Earth,
       color: "from-cyan-600 to-cyan-800",
     },
     {
       id: "premium" as TabType,
-      label: "💰 Premium",
+      label: "Premium",
       icon: Crown,
       color: "from-yellow-600 to-yellow-800",
     },
     {
       id: "chat" as TabType,
-      label: "💬 Chat",
+      label: "Chat",
       icon: MessageCircle,
       color: "from-cyan-600 to-cyan-800",
     },
