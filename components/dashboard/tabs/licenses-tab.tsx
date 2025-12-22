@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Loader2, CreditCard, Plus, Trash2, Copy, Check } from "lucide-react"
+import { Loader2, CreditCard, Plus, Trash2, Copy, Check, AlertTriangle } from "lucide-react"
 import { ConfirmationDialog } from "@/components/confirmation-dialog"
 
 interface License {
@@ -146,6 +146,32 @@ export function LicensesTab({ session, showMessage }: LicensesTabProps) {
     setTimeout(() => setCopiedKey(null), 2000)
   }
 
+  const deleteAllLicenses = () => {
+    setConfirmDialog({
+      isOpen: true,
+      title: "Delete All Licenses",
+      message: `Are you sure you want to delete ALL ${licenses.length} licenses? This action cannot be undone.`,
+      action: async () => {
+        try {
+          const response = await fetch(`${API}/client/delete_all_licenses`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              owner_id: session.owner_id,
+              secret: session.secret,
+            }),
+          })
+          const data = await response.json()
+          showMessage(data.message || "All licenses deleted", data.success ? "success" : "error")
+          if (data.success) loadLicenses()
+        } catch (error) {
+          showMessage("Error: " + error, "error")
+        }
+      },
+      isDangerous: true,
+    })
+  }
+
   return (
     <>
       <ConfirmationDialog
@@ -173,6 +199,16 @@ export function LicensesTab({ session, showMessage }: LicensesTabProps) {
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Refresh"}
           </Button>
+          {licenses.length > 0 && (
+            <Button
+              onClick={deleteAllLicenses}
+              disabled={loading}
+              className="bg-gradient-to-r from-red-600 to-red-700 hover:opacity-90 text-white shadow-md"
+            >
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              Delete All
+            </Button>
+          )}
         </div>
       </div>
 

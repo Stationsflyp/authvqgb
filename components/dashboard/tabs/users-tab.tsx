@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Loader2, UsersIcon, X } from "lucide-react"
+import { Loader2, UsersIcon, X, AlertTriangle, PauseCircle } from "lucide-react"
 import { ConfirmationDialog } from "@/components/confirmation-dialog"
 
 interface User {
@@ -219,6 +219,58 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
     })
   }
 
+  const deleteAllUsers = () => {
+    setConfirmDialog({
+      isOpen: true,
+      title: "Delete All Users",
+      message: `Are you sure you want to delete ALL ${users.length} users? This action cannot be undone.`,
+      action: async () => {
+        try {
+          const response = await fetch(`${API}/client/delete_all_users`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              owner_id: session.owner_id,
+              secret: session.secret,
+            }),
+          })
+          const data = await response.json()
+          showMessage(data.message || "All users deleted", data.success ? "success" : "error")
+          if (data.success) loadUsers()
+        } catch (error) {
+          showMessage("Error: " + error, "error")
+        }
+      },
+      isDangerous: true,
+    })
+  }
+
+  const pauseAllUsers = () => {
+    setConfirmDialog({
+      isOpen: true,
+      title: "Pause All Users",
+      message: `Pause ALL ${users.length} users? They will be forced to logout.`,
+      action: async () => {
+        try {
+          const response = await fetch(`${API}/client/pause_all_users`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              owner_id: session.owner_id,
+              secret: session.secret,
+            }),
+          })
+          const data = await response.json()
+          showMessage(data.message || "All users paused", data.success ? "success" : "error")
+          if (data.success) loadUsers()
+        } catch (error) {
+          showMessage("Error: " + error, "error")
+        }
+      },
+      isDangerous: true,
+    })
+  }
+
   return (
     <>
       <ConfirmationDialog
@@ -321,13 +373,35 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
             <UsersIcon className="h-8 w-8 text-blue-400" />
             Users Management
           </h2>
-          <Button
-            onClick={loadUsers}
-            disabled={loading}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 hover:opacity-90 text-white shadow-md"
-          >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Refresh"}
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={loadUsers}
+              disabled={loading}
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:opacity-90 text-white shadow-md"
+            >
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Refresh"}
+            </Button>
+            {users.length > 0 && (
+              <>
+                <Button
+                  onClick={pauseAllUsers}
+                  disabled={loading}
+                  className="bg-gradient-to-r from-orange-600 to-orange-700 hover:opacity-90 text-white shadow-md"
+                >
+                  <PauseCircle className="h-4 w-4 mr-2" />
+                  Pause All
+                </Button>
+                <Button
+                  onClick={deleteAllUsers}
+                  disabled={loading}
+                  className="bg-gradient-to-r from-red-600 to-red-700 hover:opacity-90 text-white shadow-md"
+                >
+                  <AlertTriangle className="h-4 w-4 mr-2" />
+                  Delete All
+                </Button>
+              </>
+            )}
+          </div>
         </div>
 
         {loading ? (
