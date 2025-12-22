@@ -6,6 +6,7 @@ export interface SessionData {
   secret: string
   avatar?: string
   email?: string
+  is_owner?: boolean
   subscription_tier?: string
   subscription_status?: string
 }

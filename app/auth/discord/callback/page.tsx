@@ -91,6 +91,7 @@ function DiscordCallbackContent() {
             secret: data.secret,
             avatar: data.avatar,
             email: data.email,
+            is_owner: data.is_owner || false,
             subscription_tier: subscriptionTier,
             subscription_status: subscriptionStatus,
           }

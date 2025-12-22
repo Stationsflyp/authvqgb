@@ -143,12 +143,14 @@ export function DashboardTabs({ session, onLogout, language, onLanguageChange }:
             >
               ⚡ Webhooks
             </TabsTrigger>
-            <TabsTrigger
-              value="discord"
-              className="data-[state=active]:bg-[#667eea] data-[state=inactive]:bg-[#1a1a1a] rounded-t-lg rounded-b-none"
-            >
-              🔐 Discord Whitelist
-            </TabsTrigger>
+            {session.is_owner && (
+              <TabsTrigger
+                value="discord"
+                className="data-[state=active]:bg-[#667eea] data-[state=inactive]:bg-[#1a1a1a] rounded-t-lg rounded-b-none"
+              >
+                🔐 Discord Whitelist
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="credentials" className="mt-0">
@@ -191,9 +193,11 @@ export function DashboardTabs({ session, onLogout, language, onLanguageChange }:
           <TabsContent value="webhook" className="mt-0">
             <WebhookTab session={session} isPremium={session.subscription_tier === "gold"} language={language} />
           </TabsContent>
-          <TabsContent value="discord" className="mt-0">
-            <DiscordWhitelistTab session={session} showMessage={showMessage} />
-          </TabsContent>
+          {session.is_owner && (
+            <TabsContent value="discord" className="mt-0">
+              <DiscordWhitelistTab session={session} showMessage={showMessage} />
+            </TabsContent>
+          )}
         </Tabs>
       </div>
 
