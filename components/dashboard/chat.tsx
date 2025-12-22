@@ -72,11 +72,11 @@ export function Chat({ username, avatar_url, email }: ChatProps) {
       try {
         const url = new URL(apiUrl)
         const wsProtocol = url.protocol === "https:" ? "wss:" : "ws:"
-        return `${wsProtocol}//${url.host}/ws/chat`
+        return `${wsProtocol}//${url.host}/api/ws/chat`
       } catch {
         const baseUrl = apiUrl.replace(/\/api\/?$/, "")
         const wsProtocol = baseUrl.includes("https") ? "wss" : "ws"
-        return baseUrl.replace(/^https?/, wsProtocol) + "/ws/chat"
+        return baseUrl.replace(/^https?/, wsProtocol) + "/api/ws/chat"
       }
     }
 
