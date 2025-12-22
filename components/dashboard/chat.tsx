@@ -20,6 +20,7 @@ interface ChatProps {
 }
 
 export function Chat({ username, avatar_url, email }: ChatProps) {
+  // Chat component - Global chat system with WebSocket
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(true)
