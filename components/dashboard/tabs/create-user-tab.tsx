@@ -20,7 +20,7 @@ export function CreateUserTab({ session, showMessage }: CreateUserTabProps) {
   const [showExpirationModal, setShowExpirationModal] = useState(false)
   const [days, setDays] = useState<number>(30)
   const [isLifetime, setIsLifetime] = useState(false)
-  const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+  const API = process.env.NEXT_PUBLIC_API_URL || "https://questions-segment-mortgages-duncan.trycloudflare.com/api"
 
   const handleCreateUserClick = async () => {
     if (!username.trim() || !password.trim()) {

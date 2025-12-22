@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Loader2, AlertCircle } from "lucide-react"
 
-export default function DiscordCallbackPage() {
+function DiscordCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [error, setError] = useState<string | null>(null)
@@ -43,7 +43,7 @@ export default function DiscordCallbackPage() {
           }
         }
 
-        const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+        const API = process.env.NEXT_PUBLIC_API_URL || "https://questions-segment-mortgages-duncan.trycloudflare.com/api"
         console.log("API URL:", API)
         console.log("Code:", code)
         
@@ -165,5 +165,20 @@ export default function DiscordCallbackPage() {
         <p className="text-slate-300 font-medium">Authenticating with Discord...</p>
       </div>
     </div>
+  )
+}
+
+export default function DiscordCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
+          <p className="text-slate-300 font-medium">Authenticating with Discord...</p>
+        </div>
+      </div>
+    }>
+      <DiscordCallbackContent />
+    </Suspense>
   )
 }

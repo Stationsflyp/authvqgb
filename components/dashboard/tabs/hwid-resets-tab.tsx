@@ -37,7 +37,7 @@ export function HWIDResetsTab({ session, showMessage }: HwidResetsTabProps) {
     action: null,
     isDangerous: false,
   })
-  const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+  const API = process.env.NEXT_PUBLIC_API_URL || "https://questions-segment-mortgages-duncan.trycloudflare.com/api"
 
   useEffect(() => {
     loadResets()

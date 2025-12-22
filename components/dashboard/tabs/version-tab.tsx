@@ -17,7 +17,7 @@ export function VersionTab({ session, showMessage }: VersionTabProps) {
   const [version, setVersion] = useState("1.1")
   const [currentVersion, setCurrentVersion] = useState("1.1")
   const [loading, setLoading] = useState(false)
-  const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+  const API = process.env.NEXT_PUBLIC_API_URL || "https://questions-segment-mortgages-duncan.trycloudflare.com/api"
 
   useEffect(() => {
     loadVersion()
