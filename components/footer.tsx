@@ -48,7 +48,7 @@ export function Footer({ lang }: FooterProps) {
             </a>
 
             <a
-              href="https://discord.gg/UfkvDeZsdG"
+              href="https://discord.gg/AjW3GRksXX"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-5 py-2.5 bg-[#5865F2] hover:bg-[#4752C4] rounded-lg transition-all duration-300 hover:scale-110 hover:shadow-xl hover:shadow-blue-500/40 shadow-lg font-medium group"

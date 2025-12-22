@@ -120,7 +120,7 @@ export function ContactTab({ session, showMessage }: ContactTabProps) {
             </div>
           </div>
 
-          <a href="https://discord.gg/UfkvDeZsdG" target="_blank" rel="noopener noreferrer" className="block w-full">
+          <a href="https://discord.gg/AjW3GRksXX" target="_blank" rel="noopener noreferrer" className="block w-full">
             <Button className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white shadow-lg text-lg py-6 transition-all hover:scale-105">
               <DiscordIcon className="h-5 w-5 mr-3" />
               Join Discord Server
