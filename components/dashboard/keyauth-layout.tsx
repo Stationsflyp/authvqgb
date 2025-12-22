@@ -34,11 +34,8 @@ import { InstallationTab } from "./tabs/installation-tab"
 import { DocsTab } from "./tabs/docs-tab"
 import { LicensesTab } from "./tabs/licenses-tab"
 import { ContactTab } from "./tabs/contact-tab"
-import { PremiumTab } from "./tabs/premium-tab"
-import { AnalyticsTab } from "./tabs/analytics-tab"
-import { ManagerTab } from "./tabs/manager-tab"
-import { WebhookTab } from "./tabs/webhook-tab"
 import { Chat } from "./chat"
+import { PremiumLayout } from "./premium-layout"
 
 interface DashboardLayoutProps {
   session: {
@@ -66,9 +63,6 @@ type TabType =
   | "contact"
   | "chat"
   | "premium"
-  | "analytics"
-  | "manager"
-  | "webhook"
 
 export function DashboardLayout({ session }: DashboardLayoutProps) {
   const [activeTab, setActiveTab] = useState<TabType>("credentials")
@@ -98,31 +92,13 @@ export function DashboardLayout({ session }: DashboardLayoutProps) {
   const tabs = [
     {
       id: "premium" as TabType,
-      label: "Premium",
+      label: "💰 Premium",
       icon: Crown,
       color: "from-yellow-600 to-yellow-800",
     },
     {
-      id: "analytics" as TabType,
-      label: "Analytics",
-      icon: Users,
-      color: "from-blue-600 to-blue-800",
-    },
-    {
-      id: "webhook" as TabType,
-      label: "Webhooks",
-      icon: Zap,
-      color: "from-purple-600 to-purple-800",
-    },
-    {
-      id: "manager" as TabType,
-      label: "Manager",
-      icon: Users,
-      color: "from-pink-600 to-pink-800",
-    },
-    {
       id: "chat" as TabType,
-      label: "Chat",
+      label: "💬 Chat",
       icon: MessageCircle,
       color: "from-cyan-600 to-cyan-800",
     },
@@ -324,24 +300,24 @@ export function DashboardLayout({ session }: DashboardLayoutProps) {
           )}
 
           {/* Tab Content */}
-          <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 shadow-2xl animate-scale-in">
-            {activeTab === "premium" && <PremiumTab session={session} language={language} />}
-            {activeTab === "analytics" && <AnalyticsTab session={session} isPremium={session.subscription_tier === "gold"} language={language} />}
-            {activeTab === "webhook" && <WebhookTab session={session} isPremium={session.subscription_tier === "gold"} language={language} />}
-            {activeTab === "manager" && <ManagerTab session={session} isPremium={session.subscription_tier === "gold"} language={language} />}
-            {activeTab === "chat" && <Chat username={session.app_name || "Usuario"} avatar_url={session.avatar || ""} email={session.email || ""} />}
-            {activeTab === "credentials" && <CredentialsTab session={session} showMessage={showMessage} />}
-            {activeTab === "docs" && <DocsTab session={session} showMessage={showMessage} />}
-            {activeTab === "installation" && <InstallationTab session={session} showMessage={showMessage} />}
-            {activeTab === "licenses" && <LicensesTab session={session} showMessage={showMessage} />}
-            {activeTab === "users" && <UsersTab session={session} showMessage={showMessage} />}
-            {activeTab === "kill" && <KillSessionTab session={session} showMessage={showMessage} />}
-            {activeTab === "create" && <CreateUserTab session={session} showMessage={showMessage} />}
-            {activeTab === "banned" && <BannedTab session={session} showMessage={showMessage} />}
-            {activeTab === "hwid_resets" && <HWIDResetsTab session={session} showMessage={showMessage} />}
-            {activeTab === "version" && <VersionTab session={session} showMessage={showMessage} />}
-            {activeTab === "contact" && <ContactTab session={session} showMessage={showMessage} />}
-          </div>
+          {activeTab === "premium" ? (
+            <PremiumLayout session={session} language={language} onBack={() => setActiveTab("credentials")} />
+          ) : (
+            <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 shadow-2xl animate-scale-in">
+              {activeTab === "chat" && <Chat username={session.app_name || "Usuario"} avatar_url={session.avatar || ""} email={session.email || ""} />}
+              {activeTab === "credentials" && <CredentialsTab session={session} showMessage={showMessage} />}
+              {activeTab === "docs" && <DocsTab session={session} showMessage={showMessage} />}
+              {activeTab === "installation" && <InstallationTab session={session} showMessage={showMessage} />}
+              {activeTab === "licenses" && <LicensesTab session={session} showMessage={showMessage} />}
+              {activeTab === "users" && <UsersTab session={session} showMessage={showMessage} />}
+              {activeTab === "kill" && <KillSessionTab session={session} showMessage={showMessage} />}
+              {activeTab === "create" && <CreateUserTab session={session} showMessage={showMessage} />}
+              {activeTab === "banned" && <BannedTab session={session} showMessage={showMessage} />}
+              {activeTab === "hwid_resets" && <HWIDResetsTab session={session} showMessage={showMessage} />}
+              {activeTab === "version" && <VersionTab session={session} showMessage={showMessage} />}
+              {activeTab === "contact" && <ContactTab session={session} showMessage={showMessage} />}
+            </div>
+          )}
         </div>
       </div>
     </div>
