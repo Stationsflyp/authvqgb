@@ -133,9 +133,9 @@ export function DashboardTabs({ session, onLogout, language, onLanguageChange }:
           </TabsContent>
           <TabsContent value="chat" className="mt-0 h-[500px]">
             <Chat 
-              username={session.app_name} 
-              avatar_url={session.avatar}
-              email={session.email}
+              username={session.app_name || "Usuario"} 
+              avatar_url={session.avatar || ""}
+              email={session.email || ""}
             />
           </TabsContent>
         </Tabs>

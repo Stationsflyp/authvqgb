@@ -4,6 +4,8 @@ export interface SessionData {
   owner_id: string
   app_name: string
   secret: string
+  avatar?: string
+  email?: string
 }
 
 export interface User {
