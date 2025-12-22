@@ -83,9 +83,10 @@ export function DashboardLayout({ session }: DashboardLayoutProps) {
     router.push("/auth/login")
   }
 
-  const blurredEmail = session.email 
-    ? session.email.split("").map((char, idx) => {
-        const emailLength = session.email.length
+  const email = session.email || ""
+  const blurredEmail = email 
+    ? email.split("").map((char, idx) => {
+        const emailLength = email.length
         const showStart = Math.ceil(emailLength * 0.2)
         const showEnd = Math.ceil(emailLength * 0.8)
         return idx < showStart || idx >= showEnd ? "•" : char
