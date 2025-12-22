@@ -36,15 +36,13 @@ export function WorldMapTab({ session, language }: WorldMapTabProps) {
 
   const loadUserLocations = async () => {
     try {
-      const response = await fetch(
-        `${API}/admin/user-locations?owner_id=${session.owner_id}&secret=${session.secret}`
-      )
+      const response = await fetch(`${API}/location/users`)
       const data = await response.json()
-      if (data.success) {
-        setUsers(data.users)
+      if (data.status === "success" && data.locations) {
+        setUsers(data.locations)
         setStats({
-          countries: new Set(data.users.map((u: any) => u.country)).size,
-          cities: new Set(data.users.map((u: any) => u.city)).size,
+          countries: new Set(data.locations.map((u: any) => u.country)).size,
+          cities: new Set(data.locations.map((u: any) => u.city)).size,
         })
       }
     } catch (error) {
