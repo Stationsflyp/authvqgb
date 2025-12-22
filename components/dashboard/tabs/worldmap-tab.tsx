@@ -57,8 +57,11 @@ export function WorldMapTab({ session, language }: WorldMapTabProps) {
 
     const loadGlobe = async () => {
       try {
-        const GlobeMod = (await import("globe.gl")).default
-        const globe = GlobeMod(containerRef.current!) as any
+        const GlobeModule = await import("globe.gl")
+        const Globe = GlobeModule.default as any
+        const globe = new Globe(containerRef.current!, {
+          rendererConfig: { antialias: true, alpha: true }
+        })
         
         globe
           .globeImageUrl("https://cdn.jsdelivr.net/npm/three-globe/example/img/earth-night.jpg")
@@ -66,6 +69,8 @@ export function WorldMapTab({ session, language }: WorldMapTabProps) {
           .pointsData(users)
           .pointColor(() => "#667eea")
           .pointRadius(() => 0.8)
+          .pointLat((d: any) => d.latitude)
+          .pointLng((d: any) => d.longitude)
           .pointLabel((d: any) => `<strong>${d.username}</strong><br/>📍 ${d.city}, ${d.country}`)
           .onPointHover((d: any) => {
             if (containerRef.current) {
@@ -77,7 +82,7 @@ export function WorldMapTab({ session, language }: WorldMapTabProps) {
         const height = containerRef.current?.clientHeight || 600
         globe.width(width).height(height)
 
-        if (globe.controls) {
+        if (globe.controls()) {
           globe.controls().autoRotate = true
           globe.controls().autoRotateSpeed = 0.8
           globe.controls().enableZoom = true
