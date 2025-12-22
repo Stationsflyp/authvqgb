@@ -27,6 +27,7 @@ export function Chat({ username, avatar_url, email }: ChatProps) {
   const [error, setError] = useState("")
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const [wordCount, setWordCount] = useState(0)
+  const [wsConnected, setWsConnected] = useState(false)
   const websocketRef = useRef<WebSocket | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://questions-segment-mortgages-duncan.trycloudflare.com/api"
@@ -65,22 +66,33 @@ export function Chat({ username, avatar_url, email }: ChatProps) {
     const ws = new WebSocket(wsUrl)
 
     ws.onopen = () => {
-      console.log("WebSocket connected")
+      console.log("WebSocket connected to:", wsUrl)
+      setWsConnected(true)
     }
 
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      if (data.error) {
-        setError(data.error)
-        setTimeout(() => setError(""), 3000)
-      } else {
-        setMessages((prev) => [...prev, data])
+      try {
+        const data = JSON.parse(event.data)
+        if (data.error) {
+          setError(data.error)
+          setTimeout(() => setError(""), 3000)
+        } else {
+          setMessages((prev) => [...prev, data])
+        }
+      } catch (e) {
+        console.error("Error parsing message:", e)
       }
     }
 
     ws.onerror = (error) => {
       console.error("WebSocket error:", error)
+      setWsConnected(false)
       setError("Error en la conexión del chat")
+    }
+
+    ws.onclose = () => {
+      console.log("WebSocket disconnected")
+      setWsConnected(false)
     }
 
     websocketRef.current = ws
@@ -167,8 +179,10 @@ export function Chat({ username, avatar_url, email }: ChatProps) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-xs text-green-400">En línea</span>
+          <div className={`w-3 h-3 rounded-full ${wsConnected ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
+          <span className={`text-xs ${wsConnected ? "text-green-400" : "text-red-400"}`}>
+            {wsConnected ? "En línea" : "Conectando..."}
+          </span>
         </div>
       </div>
 
@@ -261,7 +275,8 @@ export function Chat({ username, avatar_url, email }: ChatProps) {
           </div>
           <Button
             onClick={sendMessage}
-            disabled={isSending || !input.trim() || wordCount > 30}
+            disabled={isSending || !input.trim() || wordCount > 30 || !wsConnected}
+            title={!wsConnected ? "Conectando..." : "Enviar"}
             className="bg-[#667eea] hover:bg-[#5568d3] text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed h-12 w-12 p-0"
           >
             {isSending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
