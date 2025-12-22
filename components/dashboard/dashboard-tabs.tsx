@@ -13,6 +13,7 @@ import { CreateUserTab } from "./tabs/create-user-tab"
 import { BannedTab } from "./tabs/banned-tab"
 import { HWIDResetsTab } from "./tabs/hwid-resets-tab"
 import { VersionTab } from "./tabs/version-tab"
+import { Chat } from "./chat"
 import type { SessionData } from "@/lib/api-client"
 import { type Language, useTranslation } from "@/lib/i18n"
 
@@ -101,6 +102,12 @@ export function DashboardTabs({ session, onLogout, language, onLanguageChange }:
             >
               📦 {t("dashboard.version")}
             </TabsTrigger>
+            <TabsTrigger
+              value="chat"
+              className="data-[state=active]:bg-[#667eea] data-[state=inactive]:bg-[#1a1a1a] rounded-t-lg rounded-b-none"
+            >
+              💬 Chat
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="credentials" className="mt-0">
@@ -123,6 +130,13 @@ export function DashboardTabs({ session, onLogout, language, onLanguageChange }:
           </TabsContent>
           <TabsContent value="version" className="mt-0">
             <VersionTab session={session} language={language} />
+          </TabsContent>
+          <TabsContent value="chat" className="mt-0 h-[500px]">
+            <Chat 
+              username={session.app_name} 
+              avatar_url={session.avatar}
+              email={session.email}
+            />
           </TabsContent>
         </Tabs>
       </div>
