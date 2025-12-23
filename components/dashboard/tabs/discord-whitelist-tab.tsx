@@ -48,7 +48,7 @@ export function DiscordWhitelistTab({ session, showMessage }: DiscordWhitelistTa
 
   useEffect(() => {
     loadWhitelist()
-  }, [])
+  }, [session.owner_id, session.secret])
 
   const loadWhitelist = async () => {
     setLoading(true)

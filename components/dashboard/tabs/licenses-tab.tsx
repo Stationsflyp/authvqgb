@@ -52,7 +52,7 @@ export function LicensesTab({ session, showMessage }: LicensesTabProps) {
 
   useEffect(() => {
     loadLicenses()
-  }, [])
+  }, [session.owner_id, session.secret])
 
   const loadLicenses = async () => {
     setLoading(true)

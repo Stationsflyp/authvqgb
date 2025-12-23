@@ -41,7 +41,7 @@ export function HWIDResetsTab({ session, showMessage }: HwidResetsTabProps) {
 
   useEffect(() => {
     loadResets()
-  }, [])
+  }, [session.owner_id, session.secret])
 
   const loadResets = async () => {
     setLoading(true)

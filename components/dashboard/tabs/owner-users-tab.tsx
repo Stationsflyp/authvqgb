@@ -51,7 +51,7 @@ export function OwnerUsersTab({ session, showMessage }: OwnerUsersTabProps) {
 
   useEffect(() => {
     loadUsers()
-  }, [])
+  }, [session.owner_id, session.secret])
 
   const loadUsers = async () => {
     setLoading(true)

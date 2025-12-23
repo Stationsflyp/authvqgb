@@ -43,7 +43,7 @@ export function BannedTab({ session, showMessage }: BannedTabProps) {
 
   useEffect(() => {
     loadBanned()
-  }, [])
+  }, [session.owner_id, session.secret])
 
   const loadBanned = async () => {
     setLoading(true)

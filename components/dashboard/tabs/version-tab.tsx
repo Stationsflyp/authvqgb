@@ -21,7 +21,7 @@ export function VersionTab({ session, showMessage }: VersionTabProps) {
 
   useEffect(() => {
     loadVersion()
-  }, [])
+  }, [session.owner_id, session.secret])
 
   const loadVersion = async () => {
     try {

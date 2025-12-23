@@ -28,7 +28,7 @@ export function PremiumTab({ session, language }: PremiumTabProps) {
 
   useEffect(() => {
     loadSubscription()
-  }, [])
+  }, [session.owner_id, session.secret])
 
   const loadSubscription = async () => {
     try {
