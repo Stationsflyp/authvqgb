@@ -50,7 +50,7 @@ export function DashboardTabs({ session, onLogout, language, onLanguageChange }:
           <div className="flex items-center gap-2">
             <Shield className="h-6 w-6 text-[#667eea]" />
             <h1 className="text-xl font-bold text-[#667eea] animate-glow">
-              {session.app_name} - {t("dashboard.title")}
+              {session.display_name || session.app_name} - {t("dashboard.title")}
             </h1>
           </div>
 
@@ -176,7 +176,7 @@ export function DashboardTabs({ session, onLogout, language, onLanguageChange }:
           </TabsContent>
           <TabsContent value="chat" className="mt-0 h-[500px]">
             <Chat 
-              username={session.app_name || "Usuario"} 
+              username={session.display_name || session.app_name || "Usuario"} 
               avatar_url={session.avatar || ""}
               email={session.email || ""}
             />

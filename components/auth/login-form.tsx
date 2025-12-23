@@ -67,6 +67,7 @@ export function LoginForm({ language }: LoginFormProps) {
           const sessionData = {
             owner_id: data.owner_id,
             app_name: data.app_name,
+            display_name: data.display_name || data.app_name,
             secret: data.secret,
             avatar: data.avatar_url || "",
             email: data.email || "",
@@ -112,6 +113,7 @@ export function LoginForm({ language }: LoginFormProps) {
         const sessionData = {
           owner_id: data.owner_id,
           app_name: data.app_name,
+          display_name: data.display_name || data.app_name,
           secret: data.secret,
           avatar: avatarUrl || data.avatar_url || "",
           email: data.email || "",

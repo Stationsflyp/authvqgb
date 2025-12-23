@@ -214,11 +214,11 @@ export function DashboardLayout({ session }: DashboardLayoutProps) {
                 />
               ) : (
                 <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-lg font-bold text-blue-400 shadow-md border border-blue-500/30">
-                  {session.app_name.charAt(0).toUpperCase()}
+                  {(session.display_name || session.app_name).charAt(0).toUpperCase()}
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-bold text-white truncate">{session.app_name}</div>
+                <div className="text-sm font-bold text-white truncate">{session.display_name || session.app_name}</div>
                 <div className="text-xs text-slate-300 truncate font-mono select-none">{blurredEmail}</div>
               </div>
             </div>
@@ -334,7 +334,7 @@ export function DashboardLayout({ session }: DashboardLayoutProps) {
           ) : (
             <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 shadow-2xl animate-scale-in">
               {activeTab === "worldmap" && <WorldMapTab session={session} language={language} />}
-              {activeTab === "chat" && <Chat username={session.app_name || "Usuario"} avatar_url={session.avatar || ""} email={session.email || ""} />}
+              {activeTab === "chat" && <Chat username={session.display_name || session.app_name || "Usuario"} avatar_url={session.avatar || ""} email={session.email || ""} />}
               {activeTab === "credentials" && <CredentialsTab session={session} showMessage={showMessage} />}
               {activeTab === "docs" && <DocsTab session={session} showMessage={showMessage} />}
               {activeTab === "installation" && <InstallationTab session={session} showMessage={showMessage} />}

@@ -37,7 +37,7 @@ export default function DashboardPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             user_id: session.owner_id || "web_user",
-            username: session.app_name || "Usuario",
+            username: session.display_name || session.app_name || "Usuario",
           }),
         })
       } catch (error) {
@@ -86,7 +86,7 @@ export default function DashboardPage() {
 
   return (
     <>
-      <HolidayModal username={session.app_name || "Usuario"} />
+      <HolidayModal username={session.display_name || session.app_name || "Usuario"} />
       <DashboardLayout session={session} />
     </>
   )
