@@ -3,6 +3,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://questions-segment-m
 export interface SessionData {
   owner_id: string
   app_name: string
+  display_name?: string
   secret: string
   avatar?: string
   email?: string
