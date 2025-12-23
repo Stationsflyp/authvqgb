@@ -45,6 +45,7 @@ interface DashboardLayoutProps {
   session: {
     owner_id: string
     app_name: string
+    display_name?: string
     secret: string
     avatar?: string
     email?: string
