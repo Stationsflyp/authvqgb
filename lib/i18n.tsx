@@ -137,6 +137,8 @@ export const translations = {
     // Login
     "login.title": "Control Panel",
     "login.button": "Enter with Discord",
+    "login.access": "Login",
+    "login.verifying": "Verifying...",
     "login.soon": "Coming soon: Google, GitHub and more options",
 
     // Messages
@@ -279,6 +281,8 @@ export const translations = {
     // Login
     "login.title": "Panel de Control",
     "login.button": "Entrar con Discord",
+    "login.access": "Acceder",
+    "login.verifying": "Verificando...",
     "login.soon": "Próximamente: Google, GitHub y más opciones",
 
     // Messages

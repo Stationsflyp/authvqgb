@@ -39,6 +39,7 @@ import { Chat } from "./chat"
 import { PremiumLayout } from "./premium-layout"
 import { WorldMapTab } from "./tabs/worldmap-tab"
 import { DiscordWhitelistTab } from "./tabs/discord-whitelist-tab"
+import { OwnerUsersTab } from "./tabs/owner-users-tab"
 
 interface DashboardLayoutProps {
   session: {
@@ -69,6 +70,7 @@ type TabType =
   | "premium"
   | "worldmap"
   | "discord"
+  | "owner_users"
 
 export function DashboardLayout({ session }: DashboardLayoutProps) {
   const [activeTab, setActiveTab] = useState<TabType>("credentials")
@@ -151,12 +153,20 @@ export function DashboardLayout({ session }: DashboardLayoutProps) {
       icon: MessageCircle,
       color: "from-blue-600 to-blue-800",
     },
-    ...(session.is_owner ? [{
-      id: "discord" as TabType,
-      label: "Discord Whitelist",
-      icon: Zap,
-      color: "from-purple-600 to-purple-800",
-    }] : []),
+    ...(session.is_owner ? [
+      {
+        id: "owner_users" as TabType,
+        label: "Usuarios de Aplicación",
+        icon: Users,
+        color: "from-cyan-600 to-cyan-800",
+      },
+      {
+        id: "discord" as TabType,
+        label: "Discord Whitelist",
+        icon: Zap,
+        color: "from-purple-600 to-purple-800",
+      }
+    ] : []),
   ]
 
   const languages = [
@@ -336,6 +346,7 @@ export function DashboardLayout({ session }: DashboardLayoutProps) {
               {activeTab === "hwid_resets" && <HWIDResetsTab session={session} showMessage={showMessage} />}
               {activeTab === "version" && <VersionTab session={session} showMessage={showMessage} />}
               {activeTab === "contact" && <ContactTab session={session} showMessage={showMessage} />}
+              {activeTab === "owner_users" && session.is_owner && <OwnerUsersTab session={session} showMessage={showMessage} />}
               {activeTab === "discord" && session.is_owner && <DiscordWhitelistTab session={session} showMessage={showMessage} />}
             </div>
           )}
