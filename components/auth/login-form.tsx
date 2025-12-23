@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Shield, Lock, AlertCircle, CheckCircle, Loader2 } from "lucide-react"
 import { type Language, useTranslation } from "@/lib/i18n"
+import { ProfileSetupModal } from "./profile-setup-modal"
 
 interface LoginFormProps {
   language: Language
@@ -17,6 +18,9 @@ export function LoginForm({ language }: LoginFormProps) {
   const [isDiscordLoading, setIsDiscordLoading] = useState(false)
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [showProfileSetup, setShowProfileSetup] = useState(false)
+  const [pendingUsername, setPendingUsername] = useState("")
+  const [pendingPassword, setPendingPassword] = useState("")
   const router = useRouter()
   const { t } = useTranslation(language)
 
@@ -34,6 +38,7 @@ export function LoginForm({ language }: LoginFormProps) {
     }
 
     setIsLoading(true)
+    const startTime = Date.now()
     
     try {
       const API = process.env.NEXT_PUBLIC_API_URL || "https://questions-segment-mortgages-duncan.trycloudflare.com/api"
@@ -47,13 +52,68 @@ export function LoginForm({ language }: LoginFormProps) {
       })
 
       const data = await response.json()
+      const elapsedTime = Date.now() - startTime
+      const minLoadTime = 800
+      const delayTime = Math.max(0, minLoadTime - elapsedTime)
+
+      if (data.success) {
+        if (data.profile_completed === 0) {
+          await new Promise(resolve => setTimeout(resolve, delayTime))
+          setPendingUsername(username)
+          setPendingPassword(password)
+          setShowProfileSetup(true)
+          setIsLoading(false)
+        } else {
+          const sessionData = {
+            owner_id: data.owner_id,
+            app_name: data.app_name,
+            secret: data.secret,
+            avatar: data.avatar_url || "",
+            email: data.email || "",
+            is_owner: data.is_owner || false,
+            subscription_tier: "free",
+            subscription_status: "inactive",
+          }
+          
+          localStorage.setItem("dashSession", JSON.stringify(sessionData))
+          
+          showNotification("¡Acceso concedido!", "success")
+          setTimeout(() => {
+            router.push("/dashboard")
+          }, delayTime + 1500)
+        }
+      } else {
+        await new Promise(resolve => setTimeout(resolve, delayTime))
+        showNotification(data.message || "Error al iniciar sesión", "error")
+        setIsLoading(false)
+      }
+    } catch (error) {
+      showNotification(`Error: ${error instanceof Error ? error.message : "Unknown error"}`, "error")
+      setIsLoading(false)
+    }
+  }
+
+  const handleProfileSetupComplete = async (displayName: string, avatarUrl?: string) => {
+    const API = process.env.NEXT_PUBLIC_API_URL || "https://questions-segment-mortgages-duncan.trycloudflare.com/api"
+    
+    try {
+      const response = await fetch(`${API}/auth/username-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: pendingUsername,
+          password: pendingPassword,
+        }),
+      })
+
+      const data = await response.json()
 
       if (data.success) {
         const sessionData = {
           owner_id: data.owner_id,
           app_name: data.app_name,
           secret: data.secret,
-          avatar: data.avatar || "",
+          avatar: avatarUrl || data.avatar_url || "",
           email: data.email || "",
           is_owner: data.is_owner || false,
           subscription_tier: "free",
@@ -62,18 +122,25 @@ export function LoginForm({ language }: LoginFormProps) {
         
         localStorage.setItem("dashSession", JSON.stringify(sessionData))
         
-        showNotification("¡Acceso concedido!", "success")
+        setShowProfileSetup(false)
+        showNotification("¡Perfil completado y acceso concedido!", "success")
         setTimeout(() => {
           router.push("/dashboard")
         }, 1500)
       } else {
-        showNotification(data.message || "Error al iniciar sesión", "error")
+        showNotification(data.message || "Error al completar el perfil", "error")
       }
     } catch (error) {
       showNotification(`Error: ${error instanceof Error ? error.message : "Unknown error"}`, "error")
-    } finally {
-      setIsLoading(false)
     }
+  }
+
+  const handleProfileSetupCancel = () => {
+    setShowProfileSetup(false)
+    setPendingUsername("")
+    setPendingPassword("")
+    setUsername("")
+    setPassword("")
   }
 
   const handleDiscordLogin = () => {
@@ -265,6 +332,15 @@ export function LoginForm({ language }: LoginFormProps) {
           </div>
         </CardContent>
       </Card>
+
+      {showProfileSetup && (
+        <ProfileSetupModal
+          username={pendingUsername}
+          password={pendingPassword}
+          onComplete={handleProfileSetupComplete}
+          onCancel={handleProfileSetupCancel}
+        />
+      )}
     </>
   )
 }
