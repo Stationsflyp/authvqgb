@@ -108,7 +108,7 @@ export function ScreenViewer({ isOpen, onClose, userId, username }: ScreenViewer
         </div>
 
         {/* Content */}
-        <div className="absolute top-16 left-0 right-0 bottom-0 flex items-center justify-center bg-black overflow-hidden">
+        <div className="absolute top-24 left-0 right-0 bottom-0 flex items-center justify-center bg-black overflow-hidden">
           {isConnected && imageSrc ? (
             <img 
               src={imageSrc} 
