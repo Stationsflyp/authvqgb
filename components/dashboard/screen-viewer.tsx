@@ -84,10 +84,10 @@ export function ScreenViewer({ isOpen, onClose, userId, username }: ScreenViewer
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in zoom-in duration-200 p-4">
-      <div className={`relative bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl transition-all duration-300 ${isFullscreen ? 'w-screen h-screen rounded-none' : 'w-[90vw] h-[85vh] max-w-7xl'}`}>
+      <div className={`flex flex-col bg-slate-900 border border-slate-700 rounded-xl overflow-hidden shadow-2xl transition-all duration-300 ${isFullscreen ? 'w-screen h-screen rounded-none' : 'w-[90vw] h-[85vh] max-w-7xl'}`}>
         
         {/* Header */}
-        <div className="absolute top-0 left-0 right-0 h-12 bg-slate-900/90 backdrop-blur flex items-center justify-between px-4 z-10 border-b border-slate-700">
+        <div className="h-12 bg-slate-900/90 backdrop-blur flex items-center justify-between px-4 z-10 border-b border-slate-700 flex-shrink-0">
           <div className="flex items-center gap-2">
             <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
             <span className="font-semibold text-white">Screen: {username}</span>
@@ -108,7 +108,7 @@ export function ScreenViewer({ isOpen, onClose, userId, username }: ScreenViewer
         </div>
 
         {/* Content */}
-        <div className="absolute left-0 right-0 bottom-0 flex items-center justify-center bg-black overflow-hidden" style={{ top: '120px' }}>
+        <div className="flex-1 flex items-center justify-center bg-black overflow-hidden">
           {isConnected && imageSrc ? (
             <img 
               src={imageSrc} 
