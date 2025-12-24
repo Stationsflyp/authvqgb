@@ -20,6 +20,7 @@ export function CreateUserTab({ session, showMessage }: CreateUserTabProps) {
   const [showExpirationModal, setShowExpirationModal] = useState(false)
   const [days, setDays] = useState<number>(30)
   const [isLifetime, setIsLifetime] = useState(false)
+  const [noHwidCheck, setNoHwidCheck] = useState(false)
   const API = process.env.NEXT_PUBLIC_API_URL || "https://questions-segment-mortgages-duncan.trycloudflare.com/api"
 
   const handleCreateUserClick = async () => {
@@ -54,6 +55,7 @@ export function CreateUserTab({ session, showMessage }: CreateUserTabProps) {
           secret: session.secret,
           days: isLifetime ? 36500 : days,
           is_lifetime: isLifetime,
+          no_hwid_check: noHwidCheck ? 1 : 0,
         }),
       })
       const data = await response.json()
@@ -63,6 +65,7 @@ export function CreateUserTab({ session, showMessage }: CreateUserTabProps) {
         setPassword("")
         setDays(30)
         setIsLifetime(false)
+        setNoHwidCheck(false)
         setShowExpirationModal(false)
       }
     } catch (error) {
@@ -183,6 +186,35 @@ export function CreateUserTab({ session, showMessage }: CreateUserTabProps) {
                 </div>
               </div>
 
+              {/* Allow Shared Access Checkbox */}
+              <div 
+                onClick={() => setNoHwidCheck(!noHwidCheck)}
+                className={`group rounded-lg p-4 border-2 transition-all cursor-pointer ${
+                noHwidCheck
+                  ? "bg-purple-900/30 border-purple-500 shadow-lg shadow-purple-500/20"
+                  : "bg-slate-700/20 border-slate-600/50 hover:border-purple-500/50"
+              }`}>
+                <div className="flex items-center gap-3">
+                  <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all flex-shrink-0 ${
+                    noHwidCheck
+                      ? "bg-purple-500 border-purple-400"
+                      : "border-slate-500 hover:border-purple-500"
+                  }`}>
+                    {noHwidCheck && (
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </div>
+                  <div>
+                    <p className={`font-semibold transition-colors ${noHwidCheck ? "text-purple-400" : "text-slate-300"}`}>
+                      🔓 Allow Shared Access
+                    </p>
+                    <p className="text-xs text-slate-400 mt-0.5">Disable HWID/IP checking - multiple people can use this account</p>
+                  </div>
+                </div>
+              </div>
+
               {/* Action Buttons */}
               <div className="flex gap-3 justify-end pt-6 border-t border-slate-700/50">
                 <Button
@@ -190,6 +222,7 @@ export function CreateUserTab({ session, showMessage }: CreateUserTabProps) {
                     setShowExpirationModal(false)
                     setDays(30)
                     setIsLifetime(false)
+                    setNoHwidCheck(false)
                   }}
                   disabled={loading}
                   className="bg-slate-700/50 hover:bg-slate-700 text-slate-300 hover:text-white px-6 py-2.5 rounded-lg transition-all font-medium text-sm"
