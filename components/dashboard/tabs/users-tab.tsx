@@ -291,6 +291,32 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
     })
   }
 
+  const unpauseAllUsers = () => {
+    setConfirmDialog({
+      isOpen: true,
+      title: "Unpause All Users",
+      message: `Unpause ALL ${users.length} users? They will be able to login again.`,
+      action: async () => {
+        try {
+          const response = await fetch(`${API}/client/unpause_all_users`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              owner_id: session.owner_id,
+              secret: session.secret,
+            }),
+          })
+          const data = await response.json()
+          showMessage(data.message || "All users unpaused", data.success ? "success" : "error")
+          if (data.success) loadUsers()
+        } catch (error) {
+          showMessage("Error: " + error, "error")
+        }
+      },
+      isDangerous: false,
+    })
+  }
+
   return (
     <>
       <ScreenViewer
@@ -423,6 +449,14 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
                 >
                   <PauseCircle className="h-4 w-4 mr-2" />
                   Pause All
+                </Button>
+                <Button
+                  onClick={unpauseAllUsers}
+                  disabled={loading}
+                  className="bg-gradient-to-r from-green-600 to-green-700 hover:opacity-90 text-white shadow-md"
+                >
+                  <PauseCircle className="h-4 w-4 mr-2 rotate-180" />
+                  Unpause All
                 </Button>
                 <Button
                   onClick={deleteAllUsers}

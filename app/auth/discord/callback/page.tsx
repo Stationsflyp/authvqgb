@@ -64,7 +64,7 @@ function DiscordCallbackContent() {
             if (storedCredentials.owner_id !== data.owner_id ||
                 storedCredentials.secret !== data.secret ||
                 storedCredentials.app_name !== data.app_name) {
-              setError(`❌ Los credenciales de Discord no coinciden con tu aplicación actual. Por favor, usa la misma cuenta de Discord o limpia tu sesión.`)
+              setError(`❌ Discord credentials do not match your current application. Please use the same Discord account or clear your session.`)
               setLoading(false)
               setTimeout(() => router.push("/"), 3000)
               return
@@ -125,11 +125,23 @@ function DiscordCallbackContent() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <div className="text-center space-y-4 max-w-md">
-          <AlertCircle className="h-12 w-12 text-red-400 mx-auto" />
-          <p className="text-red-400 font-medium">{error}</p>
-          <p className="text-slate-400 text-sm">Redirecting to login...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl border border-red-500/30 p-8 max-w-md w-full shadow-2xl backdrop-blur-xl">
+          <div className="text-center space-y-6">
+            <div className="flex justify-center">
+              <div className="relative">
+                <div className="absolute inset-0 bg-red-500/20 blur-2xl animate-pulse"></div>
+                <AlertCircle className="h-16 w-16 text-red-400 relative" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold text-white">Authentication Failed</h2>
+              <p className="text-red-300 text-sm font-medium">{error}</p>
+            </div>
+            <div className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-4">
+              <p className="text-slate-400 text-xs">Redirecting you to login in 3 seconds...</p>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -147,30 +159,35 @@ function DiscordCallbackContent() {
       : "••••••••••"
 
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <div className="text-center space-y-6 max-w-md">
-          {userData.avatar && (
-            <img 
-              src={userData.avatar} 
-              alt="Profile" 
-              className="w-24 h-24 rounded-full mx-auto border-4 border-primary shadow-lg"
-            />
-          )}
-          
-          <div className="space-y-3">
-            <p className="text-slate-300 font-medium">Verificando tu perfil...</p>
-            <div className="bg-slate-800 rounded-lg p-4 space-y-2 text-sm">
-              <p className="text-slate-400">
-                Email: <span className="text-slate-200 font-mono select-none">{blurredEmail}</span>
-              </p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 rounded-2xl border border-blue-500/30 p-8 max-w-md w-full shadow-2xl backdrop-blur-xl">
+          <div className="text-center space-y-6">
+            {userData.avatar && (
+              <div className="flex justify-center">
+                <img 
+                  src={userData.avatar} 
+                  alt="Profile" 
+                  className="w-24 h-24 rounded-full border-4 border-blue-500/50 shadow-lg shadow-blue-500/20"
+                />
+              </div>
+            )}
+            
+            <div className="space-y-3">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">Verifying Profile</h2>
+              <p className="text-slate-400 text-sm">Completing your authentication...</p>
+              <div className="bg-slate-900/50 border border-slate-700/50 rounded-lg p-4 space-y-2 text-sm">
+                <p className="text-slate-400">
+                  Email: <span className="text-slate-200 font-mono select-none">{blurredEmail}</span>
+                </p>
+              </div>
             </div>
+            
+            <div className="flex justify-center pt-2">
+              <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+            </div>
+            
+            <p className="text-slate-400 text-xs">Redirecting to dashboard...</p>
           </div>
-          
-          <div className="flex justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          </div>
-          
-          <p className="text-slate-400 text-xs">Redirigiendo al dashboard...</p>
         </div>
       </div>
     )
