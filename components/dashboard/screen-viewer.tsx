@@ -108,12 +108,12 @@ export function ScreenViewer({ isOpen, onClose, userId, username }: ScreenViewer
         </div>
 
         {/* Content */}
-        <div className="flex-1 flex items-center justify-center bg-black overflow-hidden">
+        <div className="flex-1 min-h-0 flex flex-col items-center justify-center bg-black overflow-hidden">
           {isConnected && imageSrc ? (
             <img 
               src={imageSrc} 
               alt="Screen Share" 
-              className="w-full h-full object-contain"
+              className="max-h-full max-w-full object-contain"
             />
           ) : (
             <div className="text-center">
