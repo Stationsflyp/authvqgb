@@ -32,26 +32,26 @@ export function PremiumLayout({ session, onBack, language }: PremiumLayoutProps)
   const premiumTabs = [
     {
       id: "subscription" as PremiumTabType,
-      label: "💰 Suscripción",
-      description: "Gestionar tu plan Gold Premium",
+      label: "💰 Subscription",
+      description: "Manage your Gold Premium plan",
       icon: Crown,
     },
     {
       id: "analytics" as PremiumTabType,
-      label: "📊 Analítica",
-      description: "Ver estadísticas en tiempo real",
+      label: "📊 Analytics",
+      description: "View real-time statistics",
       icon: BarChart,
     },
     {
       id: "manager" as PremiumTabType,
-      label: "👥 Equipo",
-      description: "Gestionar miembros del equipo",
+      label: "👥 Team",
+      description: "Manage team members",
       icon: Users,
     },
     {
       id: "webhooks" as PremiumTabType,
       label: "⚡ Webhooks",
-      description: "Configurar Discord webhooks",
+      description: "Configure Discord webhooks",
       icon: Zap,
     },
   ]
@@ -64,7 +64,7 @@ export function PremiumLayout({ session, onBack, language }: PremiumLayoutProps)
           <button
             onClick={onBack}
             className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
-            title="Volver al dashboard"
+            title="Back to dashboard"
           >
             <ArrowLeft className="h-6 w-6 text-slate-400 hover:text-white" />
           </button>
@@ -73,13 +73,13 @@ export function PremiumLayout({ session, onBack, language }: PremiumLayoutProps)
               <Crown className="h-8 w-8 text-yellow-400" />
               Gold Premium
             </h2>
-            <p className="text-slate-400 text-sm mt-1">Características avanzadas para tu aplicación</p>
+            <p className="text-slate-400 text-sm mt-1">Advanced features for your application</p>
           </div>
         </div>
         {isPremium && (
           <div className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-full text-sm font-semibold shadow-md animate-pulse-glow border border-green-500/30">
             <span className="inline-block w-2 h-2 bg-white rounded-full mr-2 animate-pulse" />
-            Plan Activo
+            Plan Active
           </div>
         )}
       </div>

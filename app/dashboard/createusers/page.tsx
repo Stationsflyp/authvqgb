@@ -30,7 +30,7 @@ export default function CreateUsersPage() {
   const [loadingUsers, setLoadingUsers] = useState(true)
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null)
 
-  const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+  const API = process.env.NEXT_PUBLIC_API_URL || "https://questions-segment-mortgages-duncan.trycloudflare.com/api"
 
   useEffect(() => {
     const sessionStr = localStorage.getItem("session")

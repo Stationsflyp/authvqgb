@@ -28,7 +28,7 @@ export function ScreenViewer({ isOpen, onClose, userId, username }: ScreenViewer
   }, [isOpen, userId])
 
   const startPolling = () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://questions-segment-mortgages-duncan.trycloudflare.com/api"
     
     const urlObj = new URL(apiUrl)
     const protocol = urlObj.protocol === 'https:' ? 'wss:' : 'ws:'
