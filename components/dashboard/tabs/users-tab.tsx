@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Loader2, UsersIcon, X, AlertTriangle, PauseCircle } from "lucide-react"
+import { Loader2, UsersIcon, X, AlertTriangle, PauseCircle, Monitor } from "lucide-react"
 import { ConfirmationDialog } from "@/components/confirmation-dialog"
+import { ScreenViewer } from "@/components/dashboard/screen-viewer"
 
 interface User {
   id: number
@@ -36,6 +37,12 @@ interface PasswordDialog {
   newPassword: string
 }
 
+interface ScreenViewerState {
+  isOpen: boolean
+  userId: number | null
+  username: string
+}
+
 export function UsersTab({ session, showMessage }: UsersTabProps) {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
@@ -51,6 +58,11 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
     userId: null,
     username: "",
     newPassword: "",
+  })
+  const [screenViewer, setScreenViewer] = useState<ScreenViewerState>({
+    isOpen: false,
+    userId: null,
+    username: "",
   })
   const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
 
@@ -160,6 +172,14 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
         }
       },
       isDangerous: true,
+    })
+  }
+
+  const viewUserScreen = (userId: number, username: string) => {
+    setScreenViewer({
+      isOpen: true,
+      userId: userId,
+      username: username,
     })
   }
 
@@ -273,6 +293,19 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
 
   return (
     <>
+      <ScreenViewer
+        isOpen={screenViewer.isOpen}
+        onClose={() =>
+          setScreenViewer({
+            isOpen: false,
+            userId: null,
+            username: "",
+          })
+        }
+        userId={screenViewer.userId || ""}
+        username={screenViewer.username}
+      />
+
       <ConfirmationDialog
         isOpen={confirmDialog.isOpen}
         title={confirmDialog.title}
@@ -451,6 +484,13 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
                         </span>
                       </td>
                       <td className="p-4 space-x-2">
+                        <Button
+                          onClick={() => viewUserScreen(user.id, user.username)}
+                          className="bg-cyan-600 hover:bg-cyan-700 text-white text-xs px-3 py-1 h-auto shadow-sm flex items-center gap-1"
+                        >
+                          <Monitor className="h-3 w-3" />
+                          Screen
+                        </Button>
                         <Button
                           onClick={() => editUserPass(user.id, user.username)}
                           className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 h-auto shadow-sm"
