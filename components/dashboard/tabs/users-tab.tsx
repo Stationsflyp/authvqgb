@@ -12,7 +12,6 @@ interface User {
   hwid: string | null
   ip: string | null
   last_login: string | null
-  no_hwid_check: number
 }
 
 interface UsersTabProps {
@@ -453,7 +452,6 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
                     <th className="p-4 text-left font-semibold">HWID</th>
                     <th className="p-4 text-left font-semibold">IP</th>
                     <th className="p-4 text-left font-semibold">Last Login</th>
-                    <th className="p-4 text-left font-semibold">Shared Access</th>
                     <th className="p-4 text-left font-semibold">Status</th>
                     <th className="p-4 text-left font-semibold">Actions</th>
                   </tr>
@@ -479,17 +477,6 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
                       </td>
                       <td className="p-4 text-slate-400 text-sm">
                         {user.last_login ? new Date(user.last_login).toLocaleString("en-US") : "Never"}
-                      </td>
-                      <td className="p-4">
-                        {user.no_hwid_check === 1 ? (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full bg-purple-900/50 text-purple-300 text-xs font-semibold border border-purple-500/30">
-                            ✓ Enabled
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full bg-slate-700/50 text-slate-400 text-xs font-semibold border border-slate-600/30">
-                            ✗ Disabled
-                          </span>
-                        )}
                       </td>
                       <td className="p-4">
                         <span className="inline-flex items-center px-2 py-1 rounded-full bg-green-900/50 text-green-400 text-xs font-semibold border border-green-500/30">
