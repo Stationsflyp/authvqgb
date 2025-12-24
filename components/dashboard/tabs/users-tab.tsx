@@ -12,6 +12,7 @@ interface User {
   hwid: string | null
   ip: string | null
   last_login: string | null
+  no_hwid_check: number
 }
 
 interface UsersTabProps {
@@ -43,6 +44,14 @@ interface ScreenViewerState {
   username: string
 }
 
+interface CreateUserDialog {
+  isOpen: boolean
+  username: string
+  password: string
+  noHwidCheck: boolean
+  loading: boolean
+}
+
 export function UsersTab({ session, showMessage }: UsersTabProps) {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
@@ -63,6 +72,13 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
     isOpen: false,
     userId: null,
     username: "",
+  })
+  const [createUserDialog, setCreateUserDialog] = useState<CreateUserDialog>({
+    isOpen: false,
+    username: "",
+    password: "",
+    noHwidCheck: false,
+    loading: false,
   })
   const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
 
@@ -291,6 +307,48 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
     })
   }
 
+  const handleCreateUser = async () => {
+    if (!createUserDialog.username || !createUserDialog.password) {
+      showMessage("Username and password required", "error")
+      return
+    }
+    if (createUserDialog.password.length < 8) {
+      showMessage("Password must be at least 8 characters", "error")
+      return
+    }
+
+    setCreateUserDialog({ ...createUserDialog, loading: true })
+    try {
+      const response = await fetch(`${API}/client/create_user`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          owner_id: session.owner_id,
+          secret: session.secret,
+          username: createUserDialog.username,
+          password: createUserDialog.password,
+          no_hwid_check: createUserDialog.noHwidCheck ? 1 : 0,
+        }),
+      })
+      const data = await response.json()
+      showMessage(data.message || "User created", data.success ? "success" : "error")
+      if (data.success) {
+        setCreateUserDialog({
+          isOpen: false,
+          username: "",
+          password: "",
+          noHwidCheck: false,
+          loading: false,
+        })
+        loadUsers()
+      }
+    } catch (error) {
+      showMessage("Error: " + error, "error")
+    } finally {
+      setCreateUserDialog({ ...createUserDialog, loading: false })
+    }
+  }
+
   return (
     <>
       <ScreenViewer
@@ -400,6 +458,116 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
         </div>
       )}
 
+      {createUserDialog.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700/50 shadow-2xl p-6 w-96 animate-scale-in">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">Create New User</h3>
+              <button
+                onClick={() =>
+                  setCreateUserDialog({
+                    isOpen: false,
+                    username: "",
+                    password: "",
+                    noHwidCheck: false,
+                    loading: false,
+                  })
+                }
+                className="text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Username</label>
+                <input
+                  type="text"
+                  value={createUserDialog.username}
+                  onChange={(e) =>
+                    setCreateUserDialog({
+                      ...createUserDialog,
+                      username: e.target.value,
+                    })
+                  }
+                  placeholder="Enter username"
+                  className="w-full bg-slate-950/50 border border-slate-700/50 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
+                <input
+                  type="password"
+                  value={createUserDialog.password}
+                  onChange={(e) =>
+                    setCreateUserDialog({
+                      ...createUserDialog,
+                      password: e.target.value,
+                    })
+                  }
+                  placeholder="Minimum 8 characters"
+                  className="w-full bg-slate-950/50 border border-slate-700/50 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all"
+                />
+                <p className="text-xs text-slate-400 mt-1">
+                  {createUserDialog.password.length > 0 ? (
+                    <span className={createUserDialog.password.length >= 8 ? "text-green-400" : "text-red-400"}>
+                      {createUserDialog.password.length} characters
+                    </span>
+                  ) : (
+                    "Type password..."
+                  )}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg border border-slate-700/30">
+                <input
+                  type="checkbox"
+                  id="noHwidCheck"
+                  checked={createUserDialog.noHwidCheck}
+                  onChange={(e) =>
+                    setCreateUserDialog({
+                      ...createUserDialog,
+                      noHwidCheck: e.target.checked,
+                    })
+                  }
+                  className="w-4 h-4 rounded border-slate-600 accent-blue-500"
+                />
+                <label htmlFor="noHwidCheck" className="text-sm text-slate-300 cursor-pointer flex-1">
+                  <div className="font-medium">Allow Shared Access</div>
+                  <div className="text-xs text-slate-400">Disable HWID/IP checking - multiple people can use this account</div>
+                </label>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={handleCreateUser}
+                  disabled={createUserDialog.loading || createUserDialog.password.length < 8}
+                  className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded-lg transition-all flex items-center justify-center gap-2"
+                >
+                  {createUserDialog.loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create"}
+                </button>
+                <button
+                  onClick={() =>
+                    setCreateUserDialog({
+                      isOpen: false,
+                      username: "",
+                      password: "",
+                      noHwidCheck: false,
+                      loading: false,
+                    })
+                  }
+                  className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-6 animate-fade-in">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent flex items-center gap-3">
@@ -407,6 +575,20 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
             Users Management
           </h2>
           <div className="flex items-center gap-3">
+            <Button
+              onClick={() =>
+                setCreateUserDialog({
+                  isOpen: true,
+                  username: "",
+                  password: "",
+                  noHwidCheck: false,
+                  loading: false,
+                })
+              }
+              className="bg-gradient-to-r from-green-500 to-green-600 hover:opacity-90 text-white shadow-md"
+            >
+              Create User
+            </Button>
             <Button
               onClick={loadUsers}
               disabled={loading}
@@ -452,6 +634,7 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
                     <th className="p-4 text-left font-semibold">HWID</th>
                     <th className="p-4 text-left font-semibold">IP</th>
                     <th className="p-4 text-left font-semibold">Last Login</th>
+                    <th className="p-4 text-left font-semibold">Shared Access</th>
                     <th className="p-4 text-left font-semibold">Status</th>
                     <th className="p-4 text-left font-semibold">Actions</th>
                   </tr>
@@ -477,6 +660,17 @@ export function UsersTab({ session, showMessage }: UsersTabProps) {
                       </td>
                       <td className="p-4 text-slate-400 text-sm">
                         {user.last_login ? new Date(user.last_login).toLocaleString("en-US") : "Never"}
+                      </td>
+                      <td className="p-4">
+                        {user.no_hwid_check === 1 ? (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full bg-purple-900/50 text-purple-300 text-xs font-semibold border border-purple-500/30">
+                            ✓ Enabled
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full bg-slate-700/50 text-slate-400 text-xs font-semibold border border-slate-600/30">
+                            ✗ Disabled
+                          </span>
+                        )}
                       </td>
                       <td className="p-4">
                         <span className="inline-flex items-center px-2 py-1 rounded-full bg-green-900/50 text-green-400 text-xs font-semibold border border-green-500/30">
