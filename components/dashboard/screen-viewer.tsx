@@ -15,7 +15,7 @@ export function ScreenViewer({ isOpen, onClose, userId, username }: ScreenViewer
   const [isConnected, setIsConnected] = useState(false)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const pollingRef = useRef<NodeJS.Timeout | null>(null)
+  const pollingRef = useRef<WebSocket | null>(null)
 
   useEffect(() => {
     if (isOpen && userId) {
@@ -30,36 +30,47 @@ export function ScreenViewer({ isOpen, onClose, userId, username }: ScreenViewer
   const startPolling = () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
     
-    setIsConnected(true)
-    console.log("Starting screen frame polling for user:", userId)
+    const urlObj = new URL(apiUrl)
+    const protocol = urlObj.protocol === 'https:' ? 'wss:' : 'ws:'
+    const wsUrl = `${protocol}//${urlObj.host}/api/ws/screen/view/${userId}`
     
-    const pollFrame = async () => {
-      try {
-        const frameUrl = `${apiUrl}/screen/frame/${userId}`
-        const response = await fetch(frameUrl)
-        
-        if (response.ok && response.status !== 204) {
-          const blob = await response.blob()
-          if (blob.size > 0) {
-            const url = URL.createObjectURL(blob)
-            setImageSrc((prev) => {
-              if (prev) URL.revokeObjectURL(prev)
-              return url
-            })
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching screen frame:", error)
-      }
+    console.log("Connecting to Screen Share WebSocket:", wsUrl)
+    
+    const ws = new WebSocket(wsUrl)
+    ws.binaryType = "arraybuffer"
+    
+    ws.onopen = () => {
+      setIsConnected(true)
+      console.log("Connected to screen stream")
     }
     
-    pollFrame()
-    pollingRef.current = setInterval(pollFrame, 100)
+    ws.onmessage = (event) => {
+      const arrayBuffer = event.data
+      const blob = new Blob([arrayBuffer], { type: "image/jpeg" })
+      const url = URL.createObjectURL(blob)
+      
+      setImageSrc((prev) => {
+        if (prev) URL.revokeObjectURL(prev)
+        return url
+      })
+    }
+    
+    ws.onclose = () => {
+      setIsConnected(false)
+      console.log("Disconnected from screen stream")
+    }
+    
+    ws.onerror = (err) => {
+      console.error("WebSocket error:", err)
+      setIsConnected(false)
+    }
+    
+    pollingRef.current = ws
   }
 
   const cleanup = () => {
     if (pollingRef.current) {
-      clearInterval(pollingRef.current)
+      pollingRef.current.close()
       pollingRef.current = null
     }
     if (imageSrc) {
